@@ -35,7 +35,7 @@ func main() {
 	m.Use(render.Renderer())
 
 	m.Get("/", func(r render.Render) {
-		r.HTML(200, "content", []interface{}{getPage(1)})
+		r.HTML(200, "content", []interface{}{renderPages(1)})
 	})
 	// a test demo with http res and http req
 	m.Get("/test.html", func(res http.ResponseWriter, req *http.Request) {
@@ -56,11 +56,13 @@ func main() {
 
 }
 
-func getPage(index int) []FinalData {
+func renderPages(page int) FinalData {
 
-	var finalData []FinalData
+	var finalData FinalData
 	var mainDataList []MainData
 	var pageDataList []PageData
+
+	mainDataList = getMainData(page)
 
 	finalData.MainData = mainDataList
 	finalData.PageData = pageDataList
@@ -68,6 +70,6 @@ func getPage(index int) []FinalData {
 }
 
 
-func getMainData() {
+func getMainData(page int) []MainData {
 	
 }

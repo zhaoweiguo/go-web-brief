@@ -2,55 +2,63 @@ package db
 
 import (
 	"fmt"
-	"bytes"
 	"io/ioutil"
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
-)
-
-const (
-	PATH_DB = "/tmp/go-web-brief/db/"
-	PATH_FILES = "/tmp/go-web-brief/files/"
+	"github.com/zhaoweiguo/go-web-brief/error"
+	"github.com/zhaoweiguo/go-web-brief/config"
 )
 
 func init() {
 	fmt.Println("init.go init func...")
-	filepath := PATH_FILES + "dbinit.flag"
+	filepath := fmt.Sprintf("%sdbinit.flag", config.PATH_FILES)
 
-	initFlag, err := ioutil.ReadFile(filepath)
+	_, err := ioutil.ReadFile(filepath)
 	if err != nil {  // 如还没有进行数据初使化
 		InitDB()
-		err = ioutil.WriteFile(filepath, [byte(123)], 0644)
+		err = ioutil.WriteFile(filepath, []byte(""), 0644)
+	} else {
+		fmt.Println("你已经初使化过了...")
 	}
+	
 }
 
 func InitDB() {
-	path := "./go-web-brief.db"
+	path := fmt.Sprintf("%sgo-web-brief.db", config.PATH_DB)
 	db, err := sql.Open("sqlite3", path)
-	checkErr(err)
+	error.CheckErr(err)
 	defer db.Close()
 
-	sql := `create table if not exists goWebBriefTest (
+	sql := fmt.Sprintf(`create table if not exists %s (
                id integer primary key,
-               name text
-           )`
-	fmt.Println(sql)
+               title char(200),
+               pic char(200),
+               url char(200)
+            	)`, config.TAB_MAIN)
+
 	_, err = db.Exec(sql)
-	checkErr(err, sql)
+	error.CheckErr(err, sql)
+	initData(db)
+}
 
-	tx, err := db.Begin()
 
-	stmt, err := tx.Prepare("insert into goWebBriefTest values(?, ?)")
-	checkErr(err)
-	defer stmt.Close()
+func initData(db *sql.DB) {
 	for i := 0; i<10; i++ {
-		_, err = stmt.Exec(i, fmt.Sprintf("新溪-gordon %03d", i))
-		checkErr(err)
+		// fmt.Sprintf("新溪-gordon %d ", i)
+		sql := fmt.Sprintf("insert into %s values (%d, '%s', '%s', '%s')", config.TAB_MAIN, i, "新溪gordon测试用例", "http://pic1.zhimg.com/89e91c96f515b2e96d5b65b9d873b208.jpg", "http://daily.zhihu.com/story/3996747")
+		fmt.Println(sql)
+		_, err := db.Exec(sql)
+		error.CheckErr(err)
 	}
-	tx.Commit()
+	db.Close()
 
-	rows, err := db.Query("select * from goWebBriefTest")
-	checkErr(err)
+}
+
+func test() {
+	path := fmt.Sprintf("%sgo-web-brief.db", config.PATH_DB)
+	db, err := sql.Open("sqlite3", path)
+	rows, err := db.Query(fmt.Sprintf("select * from %s", config.TAB_MAIN))
+	error.CheckErr(err)
 	defer rows.Close()
 	for rows.Next() {
 		var id int
@@ -59,24 +67,10 @@ func InitDB() {
 		fmt.Println(id, name)
 	}
 	rows.Close()
-
 /*
 	_, err = db.Exec("delete from goWebBriefTest")
-	checkErr(err)
+	CheckErr(err)
 */
+
 }
-
-
-func checkErr(args ...interface{} ) {
-
-	if args[0] == nil {
-		return
-	}
-	var format bytes.Buffer
-	for _ = range args {
-		format.WriteString("%v  ")
-	}
-	fmt.Printf(format.String()+"  \n", args...)
-}
-
 
