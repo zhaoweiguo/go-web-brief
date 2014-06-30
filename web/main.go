@@ -56,13 +56,11 @@ func main() {
 
 }
 
-func getPage(index int) []MainData {
+func getPage(index int) []FinalData {
 
 	var finalData []FinalData
 	var mainDataList []MainData
 	var pageDataList []PageData
-
-	
 
 	finalData.MainData = mainDataList
 	finalData.PageData = pageDataList
