@@ -3,13 +3,27 @@ package main
 import (
 	"flag"
 	"fmt"
-	"http"
+	"net/http"
 	"github.com/zhaoweiguo/go-web-brief/config"
 	"github.com/golang/glog"
-	"github.com:martini-contrib/render"
+	"github.com/martini-contrib/render"
 	"github.com/go-martini/martini"
 )
 
+type MainItem struct {
+	Id int
+	Title string
+	ShareImage string
+}
+type MainData struct {
+	Date string
+	MainPage []MainItem
+}
+
+type FinalData struct {
+	MainData []MainData
+	PageData []PageData
+}
 
 func main() {
 	fmt.Println("go-web-brief started...")
@@ -18,9 +32,12 @@ func main() {
 	defer glog.Flush()
 	
 	m := martini.Classic()
-	m.Get("/", func(r render.Render) string {
-		return "hello world"
+	m.Use(render.Renderer())
+
+	m.Get("/", func(r render.Render) {
+		r.HTML(200, "content", []interface{}{getPage(1)})
 	})
+	// a test demo with http res and http req
 	m.Get("/test.html", func(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(200)
 	})
@@ -32,10 +49,27 @@ func main() {
 	m.Get("/hello.html", func() string {
 		return "hello world"
 	})
+	http.ListenAndServe("0.0.0.0:7111", m)    // 修改监听端口
 	m.Run()
 
 
 
 }
 
+func getPage(index int) []MainData {
 
+	var finalData []FinalData
+	var mainDataList []MainData
+	var pageDataList []PageData
+
+	
+
+	finalData.MainData = mainDataList
+	finalData.PageData = pageDataList
+	return finalData
+}
+
+
+func getMainData() {
+	
+}
