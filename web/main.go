@@ -4,7 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+
+
 	"github.com/zhaoweiguo/go-web-brief/config"
+	"github.com/zhaoweiguo/go-web-brief/db"
+	"github.com/zhaoweiguo/go-web-brief/error"
+
 	"github.com/golang/glog"
 	"github.com/martini-contrib/render"
 	"github.com/go-martini/martini"
@@ -13,11 +18,15 @@ import (
 type MainItem struct {
 	Id int
 	Title string
-	ShareImage string
+	Pic string
+	Url string
 }
 type MainData struct {
 	Date string
 	MainPage []MainItem
+}
+
+type PageData struct {
 }
 
 type FinalData struct {
@@ -59,10 +68,14 @@ func main() {
 func renderPages(page int) FinalData {
 
 	var finalData FinalData
+	var mainItemList []MainItem
+
 	var mainDataList []MainData
 	var pageDataList []PageData
 
-	mainDataList = getMainData(page)
+	mainItemList = getMainData(page)
+
+	fmt.Println(mainItemList)
 
 	finalData.MainData = mainDataList
 	finalData.PageData = pageDataList
@@ -70,6 +83,27 @@ func renderPages(page int) FinalData {
 }
 
 
-func getMainData(page int) []MainData {
-	
+func getMainData(page int) []MainItem {
+	rows := db.Query(config.TAB_MAIN)
+	var id int
+	var title string
+	var pic string
+	var url string
+
+	fmt.Println(rows)
+
+	mainData := make([]MainItem, 10)
+
+	i := 1;
+	for rows.Next() {
+		fmt.Println(i)
+		i++
+		err := rows.Scan(&id, &title, &pic, &url)
+		error.CheckErr(err)
+		mainData[i] = MainItem{id, title, pic, url}
+	}
+
+	fmt.Println(mainData)
+
+	return []MainItem{}
 }

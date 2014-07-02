@@ -9,3 +9,7 @@ const (
 	TAB_MAIN = "mainpage"
 )
 
+const (
+	DB_FILE = PATH_DB + "go-web-brief.db"
+	DB_UNITTEST_FILE = PATH_DB + "go-web-brief_unittest.db"
+)
