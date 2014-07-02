@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/zhaoweiguo/go-web-brief/error"
@@ -12,6 +13,9 @@ import (
 func init() {
 	fmt.Println("init.go init func...")
 	filepath := fmt.Sprintf("%sdbinit.flag", config.PATH_FILES)
+	for _, path := range []string{config.PATH_DB, config.PATH_FILES} {
+		os.MkdirAll(path, 0777)
+	}
 
 	_, err := ioutil.ReadFile(filepath)
 	if err != nil {  // 如还没有进行数据初使化
@@ -46,7 +50,7 @@ func initData(db *sql.DB) {
 	for i := 0; i<10; i++ {
 		// fmt.Sprintf("新溪-gordon %d ", i)
 		sql := fmt.Sprintf("insert into %s values (%d, '%s', '%s', '%s')", config.TAB_MAIN, i, "新溪gordon测试用例", "http://pic1.zhimg.com/89e91c96f515b2e96d5b65b9d873b208.jpg", "http://daily.zhihu.com/story/3996747")
-		fmt.Println(sql)
+//		fmt.Println(sql)
 		_, err := db.Exec(sql)
 		error.CheckErr(err)
 	}

@@ -5,34 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
-
 	"github.com/zhaoweiguo/go-web-brief/config"
-	"github.com/zhaoweiguo/go-web-brief/db"
-	"github.com/zhaoweiguo/go-web-brief/error"
 
 	"github.com/golang/glog"
 	"github.com/martini-contrib/render"
 	"github.com/go-martini/martini"
 )
 
-type MainItem struct {
-	Id int
-	Title string
-	Pic string
-	Url string
-}
-type MainData struct {
-	Date string
-	MainPage []MainItem
-}
-
-type PageData struct {
-}
-
-type FinalData struct {
-	MainData []MainData
-	PageData []PageData
-}
 
 func main() {
 	fmt.Println("go-web-brief started...")
@@ -41,10 +20,23 @@ func main() {
 	defer glog.Flush()
 	
 	m := martini.Classic()
-	m.Use(render.Renderer())
+//	fmt.Println(config.PATH_BASE + "templates")
+	m.Use(martini.Static(config.PATH_BASEWEB + "static"))
+	m.Use(render.Renderer(render.Options{
+		Directory : config.PATH_BASEWEB + "templates",
+		Extensions: []string{".tmpl", ".html"},
+		Charset: "UTF-8", // Sets encoding for json and html content-types. Default is "UTF-8".
+
+	}))
+
+
 
 	m.Get("/", func(r render.Render) {
 		r.HTML(200, "content", []interface{}{renderPages(1)})
+	})
+
+	m.Get("/testtpl.html", func(r render.Render) {
+		r.HTML(200, "testtpl", nil)
 	})
 	// a test demo with http res and http req
 	m.Get("/test.html", func(res http.ResponseWriter, req *http.Request) {
@@ -58,52 +50,8 @@ func main() {
 	m.Get("/hello.html", func() string {
 		return "hello world"
 	})
-	http.ListenAndServe("0.0.0.0:7111", m)    // 修改监听端口
+	http.ListenAndServe("0.0.0.0:" + config.PORT, m)    // 修改监听端口
 	m.Run()
 
-
-
 }
 
-func renderPages(page int) FinalData {
-
-	var finalData FinalData
-	var mainItemList []MainItem
-
-	var mainDataList []MainData
-	var pageDataList []PageData
-
-	mainItemList = getMainData(page)
-
-	fmt.Println(mainItemList)
-
-	finalData.MainData = mainDataList
-	finalData.PageData = pageDataList
-	return finalData
-}
-
-
-func getMainData(page int) []MainItem {
-	rows := db.Query(config.TAB_MAIN)
-	var id int
-	var title string
-	var pic string
-	var url string
-
-	fmt.Println(rows)
-
-	mainData := make([]MainItem, 10)
-
-	i := 1;
-	for rows.Next() {
-		fmt.Println(i)
-		i++
-		err := rows.Scan(&id, &title, &pic, &url)
-		error.CheckErr(err)
-		mainData[i] = MainItem{id, title, pic, url}
-	}
-
-	fmt.Println(mainData)
-
-	return []MainItem{}
-}
