@@ -17,7 +17,7 @@ func TestDate(t *testing.T) {
 	date = date.Add(time.Hour * 8)  // 2014-07-03 01:35:39.605631353 +0800 CST
 	_ = date.UTC()  // 2014-07-02 17:35:39.605631353 +0800 UTC
 
-
+	_ = date.Unix()   // unix时间戳
 
 	t.Log(date)  //CST
 
