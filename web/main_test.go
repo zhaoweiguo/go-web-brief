@@ -6,7 +6,7 @@ import(
 )
 
 
-func TestRenderPages(t *Testing.T) {
+func TestRenderPages(t *testing.T) {
 	rtn := renderPages(1)
 	fmt.Println(rtn)
 }

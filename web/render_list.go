@@ -27,8 +27,8 @@ func getPageData() []string {
 }
 
 func getMainData(page int) []MainData {
-	dateData := getDateData(page)
-	mainItems := getMainItem(page)
+//	dateData := getDateData()
+//za	mainItems := getMainItem(page)
 	return []MainData {
 	}
 }
