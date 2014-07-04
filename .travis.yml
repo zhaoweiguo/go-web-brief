@@ -3,6 +3,6 @@ go:
   - tip
 before_install:
   - ./script/dependence.sh
-  - ./script/websimple
+  - ./script/websimple.sh
 script:
     - $HOME/gopath/bin/websimple
