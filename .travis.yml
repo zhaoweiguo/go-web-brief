@@ -1,0 +1,8 @@
+language: go
+go:
+  - tip
+before_install:
+  - ./script/dependence.sh
+  - ./script/websimple
+script:
+    - $HOME/gopath/bin/websimple
