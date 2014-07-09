@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/zhaoweiguo/go-web-brief/config"
 	"github.com/zhaoweiguo/go-web-brief/db"
 	"github.com/zhaoweiguo/go-web-brief/error"
+	"github.com/zhaoweiguo/go-web-brief/utils"
 
 )
 
@@ -27,15 +29,20 @@ func getPageData() []string {
 }
 
 func getMainData(page int) []MainData {
-//	dateData := getDateData()
-//za	mainItems := getMainItem(page)
-	return []MainData {
-	}
+	dateData := getDateData()
+	mainItems := getMainItem(page)
+	mainData := MainData{dateData, mainItems}
+
+	return []MainData {	mainData }
 }
 
 func getDateData() string{
-	return "2004-10-20 Monday"
+//	return "2004-10-20 Monday"
+	fmt.Println(utils.NowDate());
+	return utils.NowDate();
 }
+
+
 
 func getMainItem(page int) []MainItem {
 	rows := db.Query(config.TAB_MAIN)

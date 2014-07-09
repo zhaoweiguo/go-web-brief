@@ -1,8 +1,14 @@
 language: go
 go:
-  - tip
+    - tip
 before_install:
-  - ./script/dependence.sh
-  - ./script/unittest.sh
+    - "cd $TRAVIS_BUILD_DIR"
+    - ./script/dependence.sh
+    - ./script/unittest.sh
+
 script:
     - $HOME/gopath/bin/websimple
+
+after_failure:
+    - "cd $TRAVIS_BUILD_DIR"
+
