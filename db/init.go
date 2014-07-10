@@ -33,16 +33,23 @@ func InitDB() {
 	error.CheckErr(err)
 	defer db.Close()
 
-	sql := fmt.Sprintf(`create table if not exists %s (
+	sql := fmt.Sprintf(`drop table if exists %s`, config.TAB_MAIN)
+	_, err = db.Exec(sql)
+	error.CheckErr(err, sql)
+
+	sql = fmt.Sprintf(`create table if not exists %s (
                id integer primary key,
                title char(200),
-               pic char(200),
-               url char(200)
+               image char(200),
+               url char(200),
+               date char(10),
+               share_url int,
+               thumbnail char(200)
             	)`, config.TAB_MAIN)
 
 	_, err = db.Exec(sql)
 	error.CheckErr(err, sql)
-	initData(db)
+//	initData(db)
 }
 
 

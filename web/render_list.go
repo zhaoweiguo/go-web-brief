@@ -11,6 +11,8 @@ import (
 
 func renderPages(page int) FinalData {
 
+	fmt.Println(page)
+
 	var finalData FinalData
 
 	var mainDataList []MainData
@@ -29,37 +31,36 @@ func getPageData() []string {
 }
 
 func getMainData(page int) []MainData {
-	dateData := getDateData()
+	dateData := getDateData(page)
 	mainItems := getMainItem(page)
 	mainData := MainData{dateData, mainItems}
 
 	return []MainData {	mainData }
 }
 
-func getDateData() string{
+func getDateData(page int) string{
 //	return "2004-10-20 Monday"
-	fmt.Println(utils.NowDate());
-	return utils.NowDate();
+	return utils.DisplayBeforeDate(page-1);
 }
 
 
-
 func getMainItem(page int) []MainItem {
-	rows := db.Query(config.TAB_MAIN)
+	date := utils.BeforeDate(page-1);
+	rows := db.QueryByDate(config.TAB_MAIN, date)
+
 	var id int
 	var title string
-	var pic string
+	var image string
 	var url string
 
-	mainData := make([]MainItem, 10)
-
+	mainData := make([]MainItem, 100)
 	i := 0;
 	for rows.Next() {
-		err := rows.Scan(&id, &title, &pic, &url)
+		err := rows.Scan(&id, &title, &image, &url)
 		error.CheckErr(err)
 //		fmt.Println(id, title, pic, url)
 		
-		mainData[i] = MainItem{id, title, pic, url}
+		mainData[i] = MainItem{id, title, image, url}
 		i++
 	}
 

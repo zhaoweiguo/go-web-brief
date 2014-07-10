@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strconv"
+	"strings"
 	"net/http"
 
 	"github.com/zhaoweiguo/go-web-brief/config"
@@ -35,6 +37,15 @@ func main() {
 		r.HTML(200, "content", []interface{}{renderPages(1)})
 	})
 
+	m.Get("/crawler", func(r render.Render) {
+		r.HTML(200, "testtpl", []interface{}{doCrawler()})
+	})
+
+	m.Get("/page/:page", func(params martini.Params, r render.Render) {
+		page, _ := strconv.Atoi(strings.Trim(params["page"], " .)("))
+		r.HTML(200, "content", []interface{}{renderPages(page)})
+	})
+
 	m.Get("/testtpl.html", func(r render.Render) {
 		r.HTML(200, "testtpl", nil)
 	})
@@ -50,7 +61,10 @@ func main() {
 	m.Get("/hello.html", func() string {
 		return "hello world"
 	})
-	http.ListenAndServe("0.0.0.0:" + config.PORT, m)    // 修改监听端口
+	http.Handle("zhihu.programfan.info/", m)
+//	http.ListenAndServe(":" + config.PORT, nil)    // 修改监听端口
+//	http.ListenAndServe("0.0.0.0:" + config.PORT, m)    // 修改监听端口
+	http.ListenAndServe("0.0.0.0:80", m)    // 修改监听端口
 	m.Run()
 
 }
