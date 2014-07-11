@@ -27,7 +27,7 @@ func renderPages(page int) FinalData {
 }
 
 func getPageData() []string {
-	return []string{"1", "2", "3"}
+	return []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
 }
 
 func getMainData(page int) []MainData {

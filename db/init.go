@@ -49,6 +49,19 @@ func InitDB() {
 
 	_, err = db.Exec(sql)
 	error.CheckErr(err, sql)
+
+
+	sql = fmt.Sprintf(`drop table if exists %s`, config.TAB_PREFIX)
+	_, err = db.Exec(sql)
+	error.CheckErr(err, sql)
+
+	sql = fmt.Sprintf(`create table if not exists %s (
+               id integer primary key,
+               key char(200)
+            	)`, config.TAB_PREFIX)
+
+	_, err = db.Exec(sql)
+	error.CheckErr(err, sql)
 //	initData(db)
 }
 

@@ -28,12 +28,24 @@ func QueryByDate(table, date string) *sql.Rows {
 	return rows
 }
 
-func Add(sqls []string) {
+func Execs(sqls []string) {
 	db, err := sql.Open("sqlite3", config.DB_FILE)
+	defer db.Close()
 	error.CheckErr(err)
 	for _, sql := range sqls {
-		rtn, err := db.Exec(sql)
+//		rtn, err := db.Exec(sql)
+		_, err = db.Exec(sql)
 		error.CheckErr(err)
-		fmt.Println(rtn)
+//		fmt.Println(sql)
 	}
+	db.Close()
+}
+func Exec(s string) {
+//	fmt.Println(s)
+	db, err := sql.Open("sqlite3", config.DB_FILE)
+	defer db.Close()
+	error.CheckErr(err)
+	_, err = db.Exec(s)
+	error.CheckErr(err)
+	db.Close()
 }
